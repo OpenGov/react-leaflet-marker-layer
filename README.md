@@ -46,7 +46,7 @@ class ExampleMarkerComponent extends React.Component {
     };
 
     return (
-      <div style={style}></div>
+      <div style={Object.assign({}, this.props.style, style)}></div>
     );
   }
 
