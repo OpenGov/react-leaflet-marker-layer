@@ -46,7 +46,8 @@ class ExampleMarkerComponent extends React.Component {
 class MapExample extends React.Component {
 
   state = {
-    mapHidden: false
+    mapHidden: false,
+    layerHidden: false
   };
 
   render() {
@@ -61,17 +62,18 @@ class MapExample extends React.Component {
     return (
       <div>
         <Map center={position} zoom={13}>
-          <MarkerLayer
+          {!this.state.layerHidden && <MarkerLayer
             markers={markers}
             longitudeExtractor={m => m.position.lng}
             latitudeExtractor={m => m.position.lat}
-            markerComponent={ExampleMarkerComponent} />
+            markerComponent={ExampleMarkerComponent} />}
           <TileLayer
             url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
         </Map>
         <input type="button" value="Toggle Map" onClick={() => this.setState({ mapHidden: !this.state.mapHidden })} />
+        <input type="button" value="Toggle Layer" onClick={() => this.setState({ layerHidden: !this.state.layerHidden })} />
       </div>
     );
   }
