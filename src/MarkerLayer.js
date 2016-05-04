@@ -44,7 +44,13 @@ export default class MarkerLayer extends MapLayer {
     fitBoundsOnLoad: React.PropTypes.bool
   };
 
+  componentWillReceiveProps() {
+    // no-op to override MapLayer behavior
+  }
+
   componentDidMount(): void {
+    this.leafletElement = ReactDOM.findDOMNode(this.refs.container);
+    this.props.map.getPanes().overlayPane.appendChild(this.leafletElement);
     if (this.props.fitBoundsOnLoad) {
       this.fitBounds();
     }
@@ -53,6 +59,7 @@ export default class MarkerLayer extends MapLayer {
   }
 
   componentWillUnmount(): void {
+    this.props.map.getPanes().overlayPane.removeChild(this.leafletElement);
   }
 
   fitBounds(): void {
