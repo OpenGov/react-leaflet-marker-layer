@@ -27,6 +27,11 @@ const markers = [
   },
 ];
 
+const markerToBeAdded = {
+  position: { lng: -119.0638890000001, lat: 40.883056000001 },
+  text: 'Black Rock City'
+};
+
 class ExampleMarkerComponent extends React.Component {
 
   render() {
@@ -51,8 +56,23 @@ class MapExample extends React.Component {
 
   state = {
     mapHidden: false,
-    layerHidden: false
+    layerHidden: false,
+    markers: markers,
   };
+
+  _moveMarker() {
+    setTimeout(() => {
+      markers[0].position.lng = markers[0].position.lng + 2;
+      this.setState({ markers: markers });
+    }, 1000 * 1);
+  }
+
+  componentDidMount() {
+    this._moveMarker();
+    setTimeout(() => {
+      this.setState({ markers: markers.concat([markerToBeAdded]) });
+    }, 1000 * 5);
+  }
 
   render() {
     if (this.state.mapHidden) {
@@ -67,10 +87,11 @@ class MapExample extends React.Component {
       <div>
         <Map center={position} zoom={13}>
           {!this.state.layerHidden && <MarkerLayer
-            markers={markers}
+            markers={this.state.markers}
             longitudeExtractor={m => m.position.lng}
             latitudeExtractor={m => m.position.lat}
-            markerComponent={ExampleMarkerComponent} />}
+            markerComponent={ExampleMarkerComponent}
+            fitBoundsOnUpdate />}
           <TileLayer
             url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

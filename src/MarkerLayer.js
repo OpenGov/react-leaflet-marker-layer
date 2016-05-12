@@ -6,6 +6,7 @@ import pluck from 'lodash.pluck';
 import min from 'lodash.min';
 import max from 'lodash.max';
 import isNumber from 'lodash.isNumber';
+import filter from 'lodash.filter';
 import L from 'leaflet';
 import { MapLayer } from 'react-leaflet';
 
@@ -39,6 +40,10 @@ function isInvalid(num: number): boolean {
   return !isNumber(num) && !num;
 }
 
+function isValid(num: number): boolean {
+  return !isInvalid(num);
+}
+
 function shouldIgnoreLocation(loc: LngLat): boolean {
   return isInvalid(loc.lng) || isInvalid(loc.lat);
 }
@@ -50,7 +55,8 @@ export default class MarkerLayer extends MapLayer {
     latitudeExtractor: React.PropTypes.func.isRequired,
     markerComponent: React.PropTypes.func.isRequired,
     propsForMarkers: React.PropTypes.object,
-    fitBoundsOnLoad: React.PropTypes.bool
+    fitBoundsOnLoad: React.PropTypes.bool,
+    fitBoundsOnUpdate: React.PropTypes.bool,
   };
 
   componentWillReceiveProps() {
@@ -73,8 +79,8 @@ export default class MarkerLayer extends MapLayer {
 
   fitBounds(): void {
     const markers = this.props.markers;
-    const lngs = map(markers, this.props.longitudeExtractor);
-    const lats = map(markers, this.props.latitudeExtractor);
+    const lngs = filter(map(markers, this.props.longitudeExtractor), isValid);
+    const lats = filter(map(markers, this.props.latitudeExtractor), isValid);
     const ne = { lng: max(lngs), lat: max(lats) };
     const sw = { lng: min(lngs), lat: min(lats) };
 
@@ -87,6 +93,9 @@ export default class MarkerLayer extends MapLayer {
 
   componentDidUpdate(): void {
     this.props.map.invalidateSize();
+    if (this.props.fitBoundsOnUpdate) {
+      this.fitBounds();
+    }
     this.updatePosition();
   }
 

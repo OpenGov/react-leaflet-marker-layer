@@ -1,3 +1,8 @@
+# 0.1.0 Release
+
+- Handle fitBounds better when bad data is present
+- added `fitBoundsOnUpdate` parameter to fit the markers on the map when they change
+
 # 0.0.6 Release
 
 - Actually build the 0.0.5 changes
