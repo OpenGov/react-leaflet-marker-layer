@@ -1,3 +1,7 @@
+# 0.0.6 Release
+
+- Actually build the 0.0.5 changes
+
 # 0.0.5 Release
 
 - Marker objects that return bad data for location are no longer rendered and are ignored when repositioning
