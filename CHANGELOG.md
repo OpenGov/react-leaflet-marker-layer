@@ -1,3 +1,7 @@
+# 0.1.1 Release
+
+- fix casing issue with `isNumber` import
+
 # 0.1.0 Release
 
 - Handle fitBounds better when bad data is present

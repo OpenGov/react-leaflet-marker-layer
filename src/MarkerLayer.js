@@ -5,7 +5,7 @@ import forEach from 'lodash.foreach';
 import pluck from 'lodash.pluck';
 import min from 'lodash.min';
 import max from 'lodash.max';
-import isNumber from 'lodash.isNumber';
+import isNumber from 'lodash.isnumber';
 import filter from 'lodash.filter';
 import L from 'leaflet';
 import { MapLayer } from 'react-leaflet';
