@@ -86,6 +86,7 @@
   },
   "dependencies": {
     "lodash.foreach": "^4.2.0",
+    "lodash.isnumber": "^3.0.3",
     "lodash.map": "^4.3.0",
     "lodash.max": "^4.0.0",
     "lodash.min": "^4.0.0",

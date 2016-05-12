@@ -20,7 +20,11 @@ const markers = [
   {
     position: { lng: -122.65596570000001, lat: 45.5199148000001 },
     text: 'Base Camp Brewing'
-  }
+  },
+  {
+    position: { lng: null, lat: 45.522558100000 },
+    text: 'A Malformed Location',
+  },
 ];
 
 class ExampleMarkerComponent extends React.Component {
