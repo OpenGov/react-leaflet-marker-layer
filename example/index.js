@@ -67,7 +67,7 @@ class MapExample extends React.Component {
   _moveMarker() {
     setTimeout(() => {
       markers[0].position.lng = markers[0].position.lng + 2;
-      this.setState({ markers: markers });
+      this.setState({ markers: Array.from(markers) });
     }, 1000 * 1);
   }
 
@@ -86,7 +86,6 @@ class MapExample extends React.Component {
         </div>
       );
     }
-    console.log('rendering index');
 
     return (
       <div>

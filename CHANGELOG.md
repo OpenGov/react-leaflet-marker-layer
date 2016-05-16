@@ -1,3 +1,7 @@
+# 0.1.3 Release
+
+- Only fit bounds on update when data or position extractors change
+
 # 0.1.2 Release
 
 - Improve performance by implementing `shouldComponentUpdate` with `react-pure-render/function`

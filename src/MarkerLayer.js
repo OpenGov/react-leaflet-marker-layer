@@ -94,9 +94,15 @@ export default class MarkerLayer extends MapLayer {
     this.props.map.fitBounds(L.latLngBounds(L.latLng(sw), L.latLng(ne)));
   }
 
-  componentDidUpdate(): void {
+  markersOrPositionExtractorsChanged(props): boolean {
+    return this.props.markers !== props.markers
+      || this.props.longitudeExtractor !== props.longitudeExtractor
+      || this.props.latitudeExtractor !== props.latitudeExtractor;
+  }
+
+  componentDidUpdate(prevProps): void {
     this.props.map.invalidateSize();
-    if (this.props.fitBoundsOnUpdate) {
+    if (this.props.fitBoundsOnUpdate && this.markersOrPositionExtractorsChanged(prevProps)) {
       this.fitBounds();
     }
     this.updatePosition();
