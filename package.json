@@ -1,6 +1,6 @@
 {
   "name": "react-leaflet-marker-layer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A custom layer for react-leaflet that makes plotting react components simple",
   "main": "lib/MarkerLayer.js",
   "scripts": {
