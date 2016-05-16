@@ -91,6 +91,7 @@
     "lodash.map": "^4.3.0",
     "lodash.max": "^4.0.0",
     "lodash.min": "^4.0.0",
-    "lodash.pluck": "^3.1.2"
+    "lodash.pluck": "^3.1.2",
+    "react-pure-render": "^1.0.2"
   }
 }

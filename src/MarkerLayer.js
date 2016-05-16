@@ -9,6 +9,7 @@ import isNumber from 'lodash.isnumber';
 import filter from 'lodash.filter';
 import L from 'leaflet';
 import { MapLayer } from 'react-leaflet';
+import shouldPureComponentUpdate from 'react-pure-render/function';
 
 export type LngLat = {
   lng: number;
@@ -59,6 +60,8 @@ export default class MarkerLayer extends MapLayer {
     fitBoundsOnUpdate: React.PropTypes.bool,
   };
 
+  shouldComponentUpdate = shouldPureComponentUpdate;
+
   componentWillReceiveProps() {
     // no-op to override MapLayer behavior
   }
@@ -97,10 +100,6 @@ export default class MarkerLayer extends MapLayer {
       this.fitBounds();
     }
     this.updatePosition();
-  }
-
-  shouldComponentUpdate(): boolean {
-    return true;
   }
 
   attachEvents(): void {

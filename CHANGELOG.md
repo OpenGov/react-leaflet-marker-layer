@@ -1,3 +1,7 @@
+# 0.1.2 Release
+
+- Improve performance by implementing `shouldComponentUpdate` with `react-pure-render/function`
+
 # 0.1.1 Release
 
 - fix casing issue with `isNumber` import

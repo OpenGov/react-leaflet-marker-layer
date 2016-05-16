@@ -52,12 +52,16 @@ class ExampleMarkerComponent extends React.Component {
 
 }
 
+const longitudeExtractor = m => m.position.lng;
+const latitudeExtractor = m => m.position.lat;
+
 class MapExample extends React.Component {
 
   state = {
     mapHidden: false,
     layerHidden: false,
     markers: markers,
+    msg: null
   };
 
   _moveMarker() {
@@ -70,7 +74,7 @@ class MapExample extends React.Component {
   componentDidMount() {
     this._moveMarker();
     setTimeout(() => {
-      this.setState({ markers: markers.concat([markerToBeAdded]) });
+      this.setState({ msg: 'LOL' });
     }, 1000 * 5);
   }
 
@@ -82,14 +86,15 @@ class MapExample extends React.Component {
         </div>
       );
     }
+    console.log('rendering index');
 
     return (
       <div>
         <Map center={position} zoom={13}>
           {!this.state.layerHidden && <MarkerLayer
             markers={this.state.markers}
-            longitudeExtractor={m => m.position.lng}
-            latitudeExtractor={m => m.position.lat}
+            longitudeExtractor={longitudeExtractor}
+            latitudeExtractor={latitudeExtractor}
             markerComponent={ExampleMarkerComponent}
             fitBoundsOnUpdate />}
           <TileLayer
@@ -99,6 +104,7 @@ class MapExample extends React.Component {
         </Map>
         <input type="button" value="Toggle Map" onClick={() => this.setState({ mapHidden: !this.state.mapHidden })} />
         <input type="button" value="Toggle Layer" onClick={() => this.setState({ layerHidden: !this.state.layerHidden })} />
+        {!!this.state.msg && this.state.msg}
       </div>
     );
   }
