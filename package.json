@@ -53,12 +53,15 @@
     "eslint-plugin-react": "^7.0.1",
     "jest-cli": "^20.0.3",
     "react-addons-test-utils": "^15.5.1",
+    "react-test-renderer": "^15.5.4",
     "react-transform-hmr": "^1.0.4",
     "webpack": "^2.5.1",
     "webpack-dev-server": "^2.4.5"
   },
   "jest": {
-    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest/src/index.js",
+    "transform": {
+      ".*": "<rootDir>/node_modules/babel-jest/build/index.js"
+    },
     "unmockedModulePathPatterns": [
       "react",
       "enzyme",
