@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import map from 'lodash.map';
-import forEach from 'lodash.foreach';
-import pluck from 'lodash.pluck';
-import min from 'lodash.min';
-import max from 'lodash.max';
-import isNumber from 'lodash.isnumber';
-import filter from 'lodash.filter';
+import PropTypes from 'prop-types';
+import map from 'lodash/map';
+import forEach from 'lodash/forEach';
+import min from 'lodash/min';
+import max from 'lodash/max';
+import isNumber from 'lodash/isNumber';
+import filter from 'lodash/filter';
 import L from 'leaflet';
-import { MapLayer } from 'react-leaflet';
-import shouldPureComponentUpdate from 'react-pure-render/function';
+import {MapLayer} from 'react-leaflet';
 
 export type LngLat = {
   lng: number;
@@ -51,16 +50,25 @@ function shouldIgnoreLocation(loc: LngLat): boolean {
 
 export default class MarkerLayer extends MapLayer {
   static propTypes = {
-    markers: React.PropTypes.array,
-    longitudeExtractor: React.PropTypes.func.isRequired,
-    latitudeExtractor: React.PropTypes.func.isRequired,
-    markerComponent: React.PropTypes.func.isRequired,
-    propsForMarkers: React.PropTypes.object,
-    fitBoundsOnLoad: React.PropTypes.bool,
-    fitBoundsOnUpdate: React.PropTypes.bool,
+    markers: PropTypes.array,
+    longitudeExtractor: PropTypes.func.isRequired,
+    latitudeExtractor: PropTypes.func.isRequired,
+    markerComponent: PropTypes.func.isRequired,
+    propsForMarkers: PropTypes.object,
+    fitBoundsOnLoad: PropTypes.bool,
+    fitBoundsOnUpdate: PropTypes.bool,
   };
 
-  shouldComponentUpdate = shouldPureComponentUpdate;
+  map: Object = null;
+
+  constructor(props, context) {
+    super(props, context);
+    this.map = (undefined !== props.map) ? props.map : context.map;
+  }
+
+  createLeafletElement(props: Object): Object {
+    return null
+  }
 
   componentWillReceiveProps() {
     // no-op to override MapLayer behavior
@@ -68,7 +76,7 @@ export default class MarkerLayer extends MapLayer {
 
   componentDidMount(): void {
     this.leafletElement = ReactDOM.findDOMNode(this.refs.container);
-    this.props.map.getPanes().overlayPane.appendChild(this.leafletElement);
+    this.map.getPanes().overlayPane.appendChild(this.leafletElement);
     if (this.props.fitBoundsOnLoad) {
       this.fitBounds();
     }
@@ -77,31 +85,31 @@ export default class MarkerLayer extends MapLayer {
   }
 
   componentWillUnmount(): void {
-    this.props.map.getPanes().overlayPane.removeChild(this.leafletElement);
+    this.map.getPanes().overlayPane.removeChild(this.leafletElement);
   }
 
   fitBounds(): void {
     const markers = this.props.markers;
     const lngs = filter(map(markers, this.props.longitudeExtractor), isValid);
     const lats = filter(map(markers, this.props.latitudeExtractor), isValid);
-    const ne = { lng: max(lngs), lat: max(lats) };
-    const sw = { lng: min(lngs), lat: min(lats) };
+    const ne = {lng: max(lngs), lat: max(lats)};
+    const sw = {lng: min(lngs), lat: min(lats)};
 
     if (shouldIgnoreLocation(ne) || shouldIgnoreLocation(sw)) {
       return;
     }
 
-    this.props.map.fitBounds(L.latLngBounds(L.latLng(sw), L.latLng(ne)));
+    this.map.fitBounds(L.latLngBounds(L.latLng(sw), L.latLng(ne)));
   }
 
   markersOrPositionExtractorsChanged(props): boolean {
     return this.props.markers !== props.markers
-      || this.props.longitudeExtractor !== props.longitudeExtractor
-      || this.props.latitudeExtractor !== props.latitudeExtractor;
+        || this.props.longitudeExtractor !== props.longitudeExtractor
+        || this.props.latitudeExtractor !== props.latitudeExtractor;
   }
 
   componentDidUpdate(prevProps): void {
-    this.props.map.invalidateSize();
+    this.map.invalidateSize();
     if (this.props.fitBoundsOnUpdate && this.markersOrPositionExtractorsChanged(prevProps)) {
       this.fitBounds();
     }
@@ -109,8 +117,8 @@ export default class MarkerLayer extends MapLayer {
   }
 
   attachEvents(): void {
-    const map: Map = this.props.map;
-    map.on('viewreset', () => this.updatePosition());
+    this.map.on('zoomend', this.updatePosition.bind(this));
+    this.map.on('viewreset', this.updatePosition.bind(this));
   }
 
   getLocationForMarker(marker): LngLat {
@@ -123,7 +131,7 @@ export default class MarkerLayer extends MapLayer {
   updatePosition(): void {
     forEach(this.props.markers, (marker, i) => {
       const markerElement = ReactDOM.findDOMNode(
-        this.refs[this.getMarkerRefName(i)]
+          this.refs[this.getMarkerRefName(i)]
       );
 
       const location = this.getLocationForMarker(marker);
@@ -132,7 +140,7 @@ export default class MarkerLayer extends MapLayer {
         return;
       }
 
-      const point = this.props.map.latLngToLayerPoint(L.latLng(location));
+      const point = this.map.latLngToLayerPoint(L.latLng(location));
 
       L.DomUtil.setPosition(markerElement, point);
     });
@@ -140,18 +148,18 @@ export default class MarkerLayer extends MapLayer {
 
   render(): React.Element {
     return (
-      <div ref="container"
-        className={`leaflet-objects-pane
+        <div ref="container"
+             className={`leaflet-objects-pane
            leaflet-marker-pane
            leaflet-zoom-hide
-           react-leaflet-marker-layer`} >
-        {this.renderMarkers()}
-      </div>
+           react-leaflet-marker-layer`}>
+          {this.renderMarkers()}
+        </div>
     );
   }
 
   renderMarkers(): Array<React.Element> {
-    const style = { position: 'absolute' };
+    const style = {position: 'absolute'};
     const MarkerComponent = this.props.markerComponent;
     return map(this.props.markers, (marker, index: number) => {
       if (shouldIgnoreLocation(this.getLocationForMarker(marker))) {
@@ -159,13 +167,13 @@ export default class MarkerLayer extends MapLayer {
       }
 
       return (
-        <MarkerComponent
-          {...this.props.propsForMarkers}
-          key={index}
-          style={style}
-          map={this.props.map}
-          ref={this.getMarkerRefName(index)}
-          marker={marker} />
+          <MarkerComponent
+              {...this.props.propsForMarkers}
+              key={index}
+              style={style}
+              map={this.map}
+              ref={this.getMarkerRefName(index)}
+              marker={marker}/>
       );
     });
   }
