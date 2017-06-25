@@ -59,6 +59,8 @@ export default class MarkerLayer extends MapLayer {
     fitBoundsOnUpdate: PropTypes.bool,
   };
 
+  createLeafletElement = () => {};
+
   map: Object = null;
   markers: Object = {};
   container = null;
@@ -189,3 +191,5 @@ export default class MarkerLayer extends MapLayer {
   }
 
 }
+
+MarkerLayer.prototype.createLeafletElement = () => {};
