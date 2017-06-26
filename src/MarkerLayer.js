@@ -59,7 +59,11 @@ export default class MarkerLayer extends MapLayer {
     fitBoundsOnUpdate: PropTypes.bool,
   };
 
+  createLeafletElement = () => {};
+
   map: Object = null;
+  markers: Object = {};
+  container = null;
 
   constructor(props, context) {
     super(props, context);
@@ -75,7 +79,7 @@ export default class MarkerLayer extends MapLayer {
   }
 
   componentDidMount(): void {
-    this.leafletElement = ReactDOM.findDOMNode(this.refs.container);
+    this.leafletElement = ReactDOM.findDOMNode(this.container);
     this.map.getPanes().overlayPane.appendChild(this.leafletElement);
     if (this.props.fitBoundsOnLoad) {
       this.fitBounds();
@@ -130,13 +134,17 @@ export default class MarkerLayer extends MapLayer {
 
   updatePosition(): void {
     forEach(this.props.markers, (marker, i) => {
-      const markerElement = ReactDOM.findDOMNode(
-          this.refs[this.getMarkerRefName(i)]
-      );
+      const markerComponent = this.markers[this.getMarkerRefName(i)];
+
+      if(!markerComponent || !markerComponent.ref) {
+        throw new Error('Missing reference: Please add a reference to your Marker element, by adding \'ref={(c) => this.ref = c}\' to your marker\'s root tag')
+      }
+
+      const markerElement = ReactDOM.findDOMNode(markerComponent.ref);
 
       const location = this.getLocationForMarker(marker);
 
-      if (shouldIgnoreLocation(location)) {
+      if (!markerElement || shouldIgnoreLocation(location)) {
         return;
       }
 
@@ -148,7 +156,7 @@ export default class MarkerLayer extends MapLayer {
 
   render(): React.Element {
     return (
-        <div ref="container"
+        <div ref={(c) => this.container = c}
              className={`leaflet-objects-pane
            leaflet-marker-pane
            leaflet-zoom-hide
@@ -172,7 +180,7 @@ export default class MarkerLayer extends MapLayer {
               key={index}
               style={style}
               map={this.map}
-              ref={this.getMarkerRefName(index)}
+              ref={(c) => this.markers[this.getMarkerRefName(index)] = c}
               marker={marker}/>
       );
     });
@@ -183,3 +191,5 @@ export default class MarkerLayer extends MapLayer {
   }
 
 }
+
+MarkerLayer.prototype.createLeafletElement = () => {};
